@@ -35,7 +35,7 @@ public class SpriteBuilder {
 
     private SpriteAnimation createAnimation(Image image, int offsetX, int offsetY, int width, int height, int count, int columns, int duration, int translateZ) {
 
-        final Rotate spriteStandRotate = new Rotate(90 - 26.565, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
+        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
         final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.Y_AXIS);
 
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
@@ -50,6 +50,7 @@ public class SpriteBuilder {
         imageView.setY(tile.getSceneY());
         imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
         imageView.setTranslateZ(tile.getSceneZ() + translateZ);
+        imageView.setPickOnBounds(false);
 
         return new SpriteAnimation(
                 imageView,

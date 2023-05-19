@@ -1,5 +1,7 @@
 package com.ethanaa.ragnalite;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.transform.Rotate;
@@ -12,6 +14,9 @@ public class WorldRegion extends Group {
     private Zone zone;
     private TileNode[][] tileNodes;
 
+    private final DoubleProperty centerX = new SimpleDoubleProperty();
+    private final DoubleProperty centerY = new SimpleDoubleProperty();
+
     private Transform rotation = new Rotate();
 
     public WorldRegion() {
@@ -23,8 +28,6 @@ public class WorldRegion extends Group {
         getTransforms().addAll(rotation);
 
         initTileNodes(this.zone);
-        Player player = new Player(this.getTileNode(25, 25), Orientation.FORWARD);
-        getChildren().add(player.getSprite());
     }
 
     private void initTileNodes(Zone zone) {
@@ -32,15 +35,32 @@ public class WorldRegion extends Group {
         for (int i = 0; i < tileNodes.length; i++) {
             for (int j = 0; j < tileNodes[0].length; j++) {
                 tileNodes[i][j] = new TileNode(i, j, 0, zone.getTiles()[i][j], zone.getBiome());
-
                 getChildren().add(tileNodes[i][j]);
             }
         }
         this.tileNodes = tileNodes;
+        this.centerX.set(this.tileNodes[REGION_WIDTH / 2][REGION_HEIGHT / 2].getSceneX());
+        this.centerY.set(this.tileNodes[REGION_WIDTH / 2][REGION_HEIGHT / 2].getSceneY());
     }
 
     public TileNode getTileNode(int x, int y) {
         return tileNodes[x][y];
+    }
+
+    public double getCenterX() {
+        return centerX.get();
+    }
+
+    public DoubleProperty centerXProperty() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY.get();
+    }
+
+    public DoubleProperty centerYProperty() {
+        return centerY;
     }
 
     public void reset() {
@@ -60,4 +80,10 @@ public class WorldRegion extends Group {
         getTransforms().set(0, rotation);
     }
 
+    public void rz(double angle) {
+        Point3D axis = new Point3D(rotation.getMzx(), rotation.getMzy(), rotation.getMzz());
+        System.out.println("Axis: " + axis.getX() + ", " + axis.getY() + ", " + axis.getZ());
+        rotation = rotation.createConcatenation(new Rotate(angle, axis));
+        getTransforms().set(0, rotation);
+    }
 }

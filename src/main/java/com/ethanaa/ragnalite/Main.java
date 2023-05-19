@@ -1,14 +1,17 @@
 package com.ethanaa.ragnalite;
 
 import javafx.application.Application;
-import javafx.geometry.Point3D;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -26,7 +29,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Main extends Application implements CommandLineRunner {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
+    private static final double DEFAULT_ZOOM_DISTANCE = 300.0;
+    private static final double MIN_ZOOM_DISTANCE = 180.0;
+    private static final double MAX_ZOOM_DISTANCE = 580.0;
+    private static final double CAMERA_ANGLE = 26.565;
+
     private final PerspectiveCamera camera = new PerspectiveCamera(true);
+    private final DoubleProperty cameraTx = camera.translateXProperty();
+    private final DoubleProperty cameraTy = camera.translateYProperty();
+    private final DoubleProperty cameraTz = camera.translateZProperty();
+    private final Rotate cameraRx = new Rotate(CAMERA_ANGLE, Rotate.X_AXIS);
 
     private final WorldRegion worldRegion = new WorldRegion();
 
@@ -56,6 +68,7 @@ public class Main extends Application implements CommandLineRunner {
         stackPane.getChildren().addAll(subScene);
 
         main.setCenter(stackPane);
+
         Scene scene = new Scene(main);
 
         stage.setTitle("Ragnalite (alpha)");
@@ -78,18 +91,23 @@ public class Main extends Application implements CommandLineRunner {
 
     private SubScene setupSubScene(Pane parent) {
 
-        Group worldGroup = new Group(createAxes(), worldRegion);
+        Player player = new Player(worldRegion.getTileNode(25, 25), Orientation.FORWARD);
+
+        Group worldGroup = new Group(createAxes(), worldRegion, player.getSprite());
 
         SubScene subScene = new SubScene(worldGroup, -1, -1, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
         subScene.setPickOnBounds(true);
+
         camera.setFieldOfView(60);
-        camera.setFarClip(1000.0);
-        camera.setTranslateZ(-300);
-        camera.setTranslateX(1250);
-        camera.setTranslateY(1400);
-        Rotate cameraRx = new Rotate(26.565, Rotate.X_AXIS);
-        camera.getTransforms().add(cameraRx);
+        camera.setFarClip(10000.0);
+
+        cameraTz.set(-DEFAULT_ZOOM_DISTANCE);
+        cameraTx.bind(worldRegion.centerXProperty());
+        cameraTy.bind(worldRegion.centerYProperty()
+                .add(cameraTz.multiply(-1).divide(Math.tan(Math.toRadians(90.0 - cameraRx.getAngle())))));
+
+        camera.getTransforms().addAll(cameraRx);
 
         subScene.setOnMousePressed(me -> {
             mousePosX = me.getX();
@@ -104,8 +122,7 @@ public class Main extends Application implements CommandLineRunner {
                 mousePosY = me.getY();
                 double mouseDeltaX = (mousePosX - mouseOldX);
                 double mouseDeltaY = (mousePosY - mouseOldY);
-                worldRegion.rx(mouseDeltaY * 180.0 / subScene.getHeight());
-                worldRegion.ry(-mouseDeltaX * 180.0 / subScene.getWidth());
+                worldRegion.rz(mouseDeltaY * 180.0 / subScene.getHeight());
             }
         });
 
@@ -117,29 +134,13 @@ public class Main extends Application implements CommandLineRunner {
 
         subScene.setOnScroll(me -> {
             double scrollAmount = me.getDeltaY();
-            //worldGroup.translateZProperty().set(worldGroup.getTranslateZ() + scrollAmount);
-            camera.setTranslateZ(camera.getTranslateZ() + scrollAmount);
+            double newTz = cameraTz.get() + scrollAmount;
+            if (-newTz >= MIN_ZOOM_DISTANCE && -newTz <= MAX_ZOOM_DISTANCE) {
+                cameraTz.set(cameraTz.get() + scrollAmount);
+            }
         });
 
         return subScene;
-    }
-
-    public void lookAt(Point3D cameraPosition, Point3D lookAtPos) {
-        //Create direction vector
-        Point3D camDirection = lookAtPos.subtract(cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getZ());
-        camDirection = camDirection.normalize();
-
-        double xRotation = Math.toDegrees(Math.asin(-camDirection.getY()));
-        double yRotation =  Math.toDegrees(Math.atan2( camDirection.getX(), camDirection.getZ()));
-
-        Rotate rx = new Rotate(xRotation, cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getZ(), Rotate.X_AXIS);
-        Rotate ry = new Rotate(yRotation, cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getZ(),  Rotate.Y_AXIS);
-
-        camera.getTransforms().addAll( ry, rx,
-                new Translate(
-                        cameraPosition.getX(),
-                        cameraPosition.getY(),
-                        cameraPosition.getZ()));
     }
 
     private LightBase createLight() {
@@ -170,23 +171,27 @@ public class Main extends Application implements CommandLineRunner {
         redMaterial.setDiffuseColor(Color.DARKRED);
         redMaterial.setSpecularColor(Color.RED);
 
-        final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.DARKGREEN);
-        greenMaterial.setSpecularColor(Color.GREEN);
+        final PhongMaterial yellowMaterial = new PhongMaterial();
+        yellowMaterial.setDiffuseColor(Color.DARKGOLDENROD);
+        yellowMaterial.setSpecularColor(Color.YELLOW);
 
         final PhongMaterial blueMaterial = new PhongMaterial();
         blueMaterial.setDiffuseColor(Color.DARKBLUE);
         blueMaterial.setSpecularColor(Color.BLUE);
 
-        final Box xAxis = new Box(5, 1, 1);
-        final Box yAxis = new Box(1, 5, 1);
-        final Box zAxis = new Box(1, 1, 5);
+        final Box xAxis = new Box(50, 2, 2);
+        final Box yAxis = new Box(2, 50, 2);
+        final Box zAxis = new Box(2, 2, 50);
 
         xAxis.setMaterial(redMaterial);
-        yAxis.setMaterial(greenMaterial);
+        yAxis.setMaterial(yellowMaterial);
         zAxis.setMaterial(blueMaterial);
 
-        return new Group(xAxis, yAxis, zAxis);
+        Group axesGroup = new Group(xAxis, yAxis, zAxis);
+
+        axesGroup.getTransforms().addAll(new Translate(1250, 1250, -100));
+
+        return axesGroup;
     }
 
     private Group createDebugPanel() {
