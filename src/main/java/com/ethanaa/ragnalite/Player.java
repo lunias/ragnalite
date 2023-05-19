@@ -1,54 +1,26 @@
 package com.ethanaa.ragnalite;
 
-import javafx.scene.PerspectiveCamera;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.Image;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 
 public class Player {
+
+    private static final Image IMAGE = new Image("sprites2.png");
+    private static final Image IMAGE_BACK = new Image("sprites2_back.png");
 
     private TileNode tile;
     private Sprite sprite;
     private Orientation orientation;
     private Action action = Action.IDLE;
-    private PerspectiveCamera camera;
 
-    private Rotate cameraRx;
-    private Rotate cameraRy;
-    private Rotate cameraRz;
+    private final DoubleProperty centerX = new SimpleDoubleProperty();
+    private final DoubleProperty centerY = new SimpleDoubleProperty();
 
-    private Translate cameraX;
-    private Translate cameraY;
-    private Translate cameraZ;
-
-    private static final Image IMAGE = new Image("sprites2.png");
-    private static final Image IMAGE_BACK = new Image("sprites2_back.png");
-
-    public Player(TileNode tile, Orientation orientation) {
+    public Player(TileNode tile, Orientation orientation, Rotate cameraRz) {
         this.tile = tile;
         this.orientation = orientation;
-        this.camera = new PerspectiveCamera(false);
-
-        cameraRx = new Rotate(0, Rotate.X_AXIS);
-        cameraRx.setPivotX(tile.getSceneX());
-        cameraRx.setPivotY(tile.getSceneY());
-        cameraRx.setPivotZ(tile.getSceneZ());
-
-        cameraRy = new Rotate(0, Rotate.Y_AXIS);
-        cameraRy.setPivotX(tile.getSceneX());
-        cameraRy.setPivotY(tile.getSceneY());
-        cameraRy.setPivotZ(tile.getSceneZ());
-
-        cameraRz = new Rotate(0, Rotate.Z_AXIS);
-        cameraRz.setPivotX(tile.getSceneX());
-        cameraRz.setPivotY(tile.getSceneY());
-        cameraRz.setPivotZ(tile.getSceneZ());
-
-        cameraX = new Translate(0, 0, 0);
-        cameraY = new Translate(0, 0, 0);
-        cameraZ = new Translate(0, 0, -500);
-
-        this.camera.getTransforms().addAll(cameraRx, cameraRy, cameraRz, cameraX, cameraY, cameraZ);
 
         this.sprite = new SpriteBuilder()
                 .setTile(this.tile)
@@ -62,61 +34,28 @@ public class Player {
                 .setOrientation(this.orientation)
                 .setAction(this.action)
                 .build();
+
+        this.centerX.set(tile.getSceneX());
+        this.centerY.set(tile.getSceneY());
     }
 
     public Sprite getSprite() {
         return sprite;
     }
 
-    public PerspectiveCamera getCamera() {
-        return camera;
+    public double getCenterX() {
+        return centerX.get();
     }
 
-    public Rotate getCameraRx() {
-        return cameraRx;
+    public DoubleProperty centerXProperty() {
+        return centerX;
     }
 
-    public void setCameraRx(Rotate cameraRx) {
-        this.cameraRx = cameraRx;
+    public double getCenterY() {
+        return centerY.get();
     }
 
-    public Rotate getCameraRy() {
-        return cameraRy;
-    }
-
-    public void setCameraRy(Rotate cameraRy) {
-        this.cameraRy = cameraRy;
-    }
-
-    public Rotate getCameraRz() {
-        return cameraRz;
-    }
-
-    public void setCameraRz(Rotate cameraRz) {
-        this.cameraRz = cameraRz;
-    }
-
-    public Translate getCameraX() {
-        return cameraX;
-    }
-
-    public void setCameraX(Translate cameraX) {
-        this.cameraX = cameraX;
-    }
-
-    public Translate getCameraY() {
-        return cameraY;
-    }
-
-    public void setCameraY(Translate cameraY) {
-        this.cameraY = cameraY;
-    }
-
-    public Translate getCameraZ() {
-        return cameraZ;
-    }
-
-    public void setCameraZ(Translate cameraZ) {
-        this.cameraZ = cameraZ;
+    public DoubleProperty centerYProperty() {
+        return centerY;
     }
 }

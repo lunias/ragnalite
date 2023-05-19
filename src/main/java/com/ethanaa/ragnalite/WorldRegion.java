@@ -2,10 +2,7 @@ package com.ethanaa.ragnalite;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 
 public class WorldRegion extends Group {
 
@@ -17,15 +14,11 @@ public class WorldRegion extends Group {
     private final DoubleProperty centerX = new SimpleDoubleProperty();
     private final DoubleProperty centerY = new SimpleDoubleProperty();
 
-    private Transform rotation = new Rotate();
-
     public WorldRegion() {
         this.zone = new Zone(
                 REGION_WIDTH,
                 REGION_HEIGHT,
                 Biome.DESERT);
-
-        getTransforms().addAll(rotation);
 
         initTileNodes(this.zone);
     }
@@ -61,29 +54,5 @@ public class WorldRegion extends Group {
 
     public DoubleProperty centerYProperty() {
         return centerY;
-    }
-
-    public void reset() {
-        rotation = new Rotate();
-        getTransforms().set(0, rotation);
-    }
-
-    public void rx(double angle) {
-        Point3D axis = new Point3D(rotation.getMxx(), rotation.getMxy(), rotation.getMxz());
-        rotation = rotation.createConcatenation(new Rotate(angle, axis));
-        getTransforms().set(0, rotation);
-    }
-
-    public void ry(double angle) {
-        Point3D axis = new Point3D(rotation.getMyx(), rotation.getMyy(), rotation.getMyz());
-        rotation = rotation.createConcatenation(new Rotate(angle, axis));
-        getTransforms().set(0, rotation);
-    }
-
-    public void rz(double angle) {
-        Point3D axis = new Point3D(rotation.getMzx(), rotation.getMzy(), rotation.getMzz());
-        System.out.println("Axis: " + axis.getX() + ", " + axis.getY() + ", " + axis.getZ());
-        rotation = rotation.createConcatenation(new Rotate(angle, axis));
-        getTransforms().set(0, rotation);
     }
 }

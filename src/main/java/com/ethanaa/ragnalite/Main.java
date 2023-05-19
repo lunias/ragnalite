@@ -30,7 +30,7 @@ public class Main extends Application implements CommandLineRunner {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private static final double DEFAULT_ZOOM_DISTANCE = 300.0;
-    private static final double MIN_ZOOM_DISTANCE = 180.0;
+    private static final double MIN_ZOOM_DISTANCE = 220.0;
     private static final double MAX_ZOOM_DISTANCE = 580.0;
     private static final double CAMERA_ANGLE = 26.565;
 
@@ -41,6 +41,8 @@ public class Main extends Application implements CommandLineRunner {
     private final Rotate cameraRx = new Rotate(CAMERA_ANGLE, Rotate.X_AXIS);
 
     private final WorldRegion worldRegion = new WorldRegion();
+
+    private final Rotate worldRotate = new Rotate(0, 0, 0, 0, Rotate.Z_AXIS);
 
     private double mousePosX, mousePosY, mouseOldX, mouseOldY;
 
@@ -91,7 +93,7 @@ public class Main extends Application implements CommandLineRunner {
 
     private SubScene setupSubScene(Pane parent) {
 
-        Player player = new Player(worldRegion.getTileNode(25, 25), Orientation.FORWARD);
+        Player player = new Player(worldRegion.getTileNode(25, 25), Orientation.FORWARD, new Rotate());
 
         Group worldGroup = new Group(createAxes(), worldRegion, player.getSprite());
 
@@ -99,12 +101,16 @@ public class Main extends Application implements CommandLineRunner {
         subScene.setCamera(camera);
         subScene.setPickOnBounds(true);
 
+        worldRegion.getTransforms().add(worldRotate);
+        worldRotate.pivotXProperty().bind(player.centerXProperty().add(25.0));
+        worldRotate.pivotYProperty().bind(player.centerYProperty().add(25.0));
+
         camera.setFieldOfView(60);
         camera.setFarClip(10000.0);
 
         cameraTz.set(-DEFAULT_ZOOM_DISTANCE);
-        cameraTx.bind(worldRegion.centerXProperty());
-        cameraTy.bind(worldRegion.centerYProperty()
+        cameraTx.bind(player.centerXProperty());
+        cameraTy.bind(player.centerYProperty()
                 .add(cameraTz.multiply(-1).divide(Math.tan(Math.toRadians(90.0 - cameraRx.getAngle())))));
 
         camera.getTransforms().addAll(cameraRx);
@@ -122,7 +128,8 @@ public class Main extends Application implements CommandLineRunner {
                 mousePosY = me.getY();
                 double mouseDeltaX = (mousePosX - mouseOldX);
                 double mouseDeltaY = (mousePosY - mouseOldY);
-                worldRegion.rz(mouseDeltaY * 180.0 / subScene.getHeight());
+                //worldRegion.rz(mouseDeltaY * 180.0 / subScene.getHeight());
+                worldRotate.angleProperty().setValue((worldRotate.getAngle() + mouseDeltaY) % 360.0);
             }
         });
 
