@@ -93,9 +93,9 @@ public class Main extends Application implements CommandLineRunner {
 
     private SubScene setupSubScene(Pane parent) {
 
-        Player player = new Player(worldRegion.getTileNode(25, 25), Orientation.FORWARD, new Rotate());
+        Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD, new Rotate());
 
-        Group worldGroup = new Group(createAxes(), worldRegion, player.getSprite());
+        Group worldGroup = new Group(worldRegion, player.getSprite());
 
         SubScene subScene = new SubScene(worldGroup, -1, -1, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
@@ -121,14 +121,10 @@ public class Main extends Application implements CommandLineRunner {
         });
 
         subScene.setOnMouseDragged(me -> {
-            if (me.isPrimaryButtonDown()) {
-                mouseOldX = mousePosX;
+            if (me.isSecondaryButtonDown()) {
                 mouseOldY = mousePosY;
-                mousePosX = me.getX();
                 mousePosY = me.getY();
-                double mouseDeltaX = (mousePosX - mouseOldX);
                 double mouseDeltaY = (mousePosY - mouseOldY);
-                //worldRegion.rz(mouseDeltaY * 180.0 / subScene.getHeight());
                 worldRotate.angleProperty().setValue((worldRotate.getAngle() + mouseDeltaY) % 360.0);
             }
         });

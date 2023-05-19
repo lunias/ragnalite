@@ -6,8 +6,8 @@ import javafx.scene.Group;
 
 public class WorldRegion extends Group {
 
-    private static final int REGION_WIDTH = 50;
-    private static final int REGION_HEIGHT = 50;
+    private static final int REGION_WIDTH = 100;
+    private static final int REGION_HEIGHT = 100;
     private Zone zone;
     private TileNode[][] tileNodes;
 
