@@ -1,0 +1,343 @@
+3d tiled environment
+2d sprites
+camera centered on character w/ fixed angle to horizon
+scroll to zoom camera in and out on character
+can rotate camera w/ arrow keys
+hotkey to reset camera angle
+click tile to move w/ A* pathing
+tab for large map overlay showing explored area only (unexplored is transparent)
+whole screen is visible (no fog / darkness for unexplored areas)
+minimap in top right w/ click to move, character in center of minimap
+
+multiplayer up to partySize players
+players can trade w/ each other
+main server architecture
+
+starting town area w/ NPCs that unlock based on individual character progression
+
+stats:
+
+strength: attack damage, attack aoe range
+vitality: health, damage reduction
+inteligence: spell damage, mana
+wisdom: positive spell effectiveness, mana regen
+agility: dodge chance, attack / cast speed
+dexterity: crit chance, ranged attack range
+
+base classes:
+fighter
+mage
+rogue
+healer
+
+base / sub classes:
+fighter:
+    mage: spellblade
+    rogue: berserker
+    healer: monk
+mage:
+    fighter: mageknight
+    rogue: duelist
+    healer: enchanter
+rogue:
+    fighter: mercenary
+    mage: trickster
+    healer: scout
+healer:
+    fighter: nomad
+    mage: mystic
+    rogue: druid
+
+advanced classes:
+fighter:
+    mage:
+        spellblade:
+            deathknight
+            dragoon
+            fencer
+    rogue:
+        berserker:
+            reaver
+            marauder
+            maniac
+    healer:
+        monk:
+            bishop
+            cultist
+            arbiter
+mage:
+    fighter:
+        mageknight:
+            spellbreaker
+            mentalist
+            sensei
+    rogue:
+        duelist:
+            firedancer
+            sniper
+            tactician
+    healer:
+        enchanter:
+            alchemist
+            telepath
+            summoner
+rogue:
+    fighter:
+        mercenary:
+            outrider
+            swashbuckler
+            assassin
+    mage:
+        trickster:
+            ninja
+            falconer
+            rake
+    healer:
+        scout:
+            trapper
+            wilder
+            scavenger
+healer:
+    fighter:
+        nomad:
+            beastmaster
+            hunter
+            mountaineer
+    mage:
+        mystic:
+            herbalist
+            channeler
+            astrologist
+    rogue:
+        druid:
+            animist
+            warden
+            brewmeister
+
+skills:
+    fighter:
+        charge
+        smash *
+        bandage
+
+        spellblade:
+            enchant weapon
+            barrier
+
+            deathknight:
+                deathtouch
+            dragoon:
+                summon dragon
+            fencer:
+                riposte
+
+        berserker:
+            berserk
+            leap
+
+            reaver:
+                flurry
+            maurader:
+                rend
+            maniac:
+                enrage
+
+        monk:
+            pummel
+            pray
+
+            bishop:
+                oath
+            cultist:
+                renounce
+            arbiter:
+                judgement
+
+    mage:
+        fireball *
+        arcance explosion
+        manashield
+
+        mageknight:
+            firebreath
+            stoneskin
+
+            spellbreaker:
+                manaburn
+            mentalist:
+                deceive
+            sensei:
+                meditate
+
+        duelist:
+            slap
+            cower
+
+            firedancer:
+                whirlwind
+            sniper:
+                aimed strike
+            tactician:
+                plan
+
+        enchanter:
+            ignite
+            fear
+
+            alchemist:
+                infusion
+            telepath:
+                charm
+            summoner:
+                summon elemental
+
+    rogue:
+        backstab
+        poison bomb
+        hide
+
+        mercenary:
+            shout
+            parry
+
+            outrider:
+                trample
+            swashbuckler:
+                pillage
+            assassin:
+                eviscerate
+
+        trickster:
+            coinflip
+            smoke screen
+
+            ninja:
+                kunai
+            falconer:
+                summon falcon
+            rake:
+                monopolize
+
+        scout:
+            mark
+            flank
+
+            trapper:
+                trap
+            wilder:
+                spirit call
+            scavenger:
+                scavenge
+
+    healer:
+        smite
+        holy aura
+        heal *
+
+        nomad:
+            cleave
+            scavenge
+
+            beastmaster:
+                summon beast
+            hunter:
+                gut
+            mountainer:
+                earthquake
+        mystic:
+            runeblast
+            scribe
+
+            herbalist:
+                puff
+            channeler:
+                focus
+            astrologist:
+                horoscope
+        druid:
+            poison vines
+            swift
+
+            animist:
+                summon doppleganger
+            warden:
+                thorn shield
+            brewmeister:
+                brew
+
+gear slots:
+     helm
+     neck
+     chest
+     shoulders
+     bracers
+     gloves
+     belt
+     pants
+     boots
+     ring 1
+     ring 2
+     mainhand
+     offhand
+     artifact
+
+str
+vit
+int
+wis
+agi
+dex
+attack damage
+health
+spell damage
+positive spell effectiveness
+dodge chance
+crit chance
+attack aoe range
+damage reduction
+mana
+mana cost reduction
+mana regen
+attack / cast speed
+ranged attack range
+cooldown reduction
+health regen
+resists
+movespeed
+
+buy base items or get them from drops
+base items do not have random affixes except upgrade potential (0 - 10)
+combine upgraded bases to make legendaries that are normally drops
+bosses can drop uniques that cannot be made
+
+crafting items:
+combine crafting materials to make better crafting materials
+level up crafting level of upgrade on successful craft
+items of a slot can be upgraded n times (depends on slot)
+
+elements for offense and defense
+elements of zones outside of town
+mob types (e.g. undead)
+
+quests to unlock advanced classes
+hidden classes?
+
+100 skill points
+base skill trees have 2x as many options as upgraded:
+200 possible in base tree
+upgraded skill trees have 2x as many as advanced:
+100 possible upgraded tree
+50 possible in the advanced tree
+
+max level crafting + 100 mats == 100% + 10x
+max level crafting + 1 mats == 100% + 1x
+no level crafting + 100 mats == 50% + 10x
+no level crafting + 1 mats == 50% + 1x
+
+DEV TODOS:
+
+Get map and camera angle correct (rotateX)
+Rotate sprite away from camera so that it is perpendicular to camera angle (-rotateX)
+Zoom camera along vector from (max camera) to sprite position (min camera)
+Rotate map underneath players
+Update sprites based on map rotate
