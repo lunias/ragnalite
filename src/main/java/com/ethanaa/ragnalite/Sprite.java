@@ -63,7 +63,11 @@ public class Sprite extends ImageView {
         this.tile = spriteBuilder.getTile();
 
         this.tile.addListener(((observable, oldTile, newTile) -> {
-            System.out.println("Tile was updated: " + newTile);
+            if (oldTile.getY() < newTile.getY()) {
+                setCurrentOrientation(Orientation.FORWARD);
+            } else if (oldTile.getY() > newTile.getY()){
+                setCurrentOrientation(Orientation.BACKWARD);
+            }
             moveTo(newTile);
         }));
 
@@ -115,20 +119,28 @@ public class Sprite extends ImageView {
 
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
 
+        double xOffsetForward = -20.0;
+        double yOffsetForward = -37.5;
+        double xOffsetBackward = -30.0;
+        double yOffsetBackward = -37.5;
+
+        double xOffset = getCurrentOrientation() == Orientation.FORWARD ? xOffsetForward : xOffsetBackward;
+        double yOffset = getCurrentOrientation() == Orientation.FORWARD ? yOffsetForward : yOffsetBackward;
+
         for (Map<Orientation, SpriteAnimation> orientationSpriteAnimationMap : animationMap.values()) {
             for (SpriteAnimation spriteAnimation : orientationSpriteAnimationMap.values()) {
 
                 ImageView imageView = spriteAnimation.getImageView();
-                imageView.setX(tile.getSceneX() - 20.0); // TODO these offsets are odd, camera shifts on first move, breaks rotate
-                imageView.setY(tile.getSceneY() - 37.5); // TODO these offsets are odd, camera shifts on first move, breaks rotate
+                imageView.setX(tile.getSceneX() + xOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
+                imageView.setY(tile.getSceneY() + yOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
                 imageView.getTransforms().clear();
                 imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
                 imageView.setTranslateZ(tile.getSceneZ() - 100.0);
             }
         }
 
-        setX(tile.getSceneX() - 20.0); // TODO these offsets are odd, camera shifts on first move, breaks rotate
-        setY(tile.getSceneY() - 37.5); // TODO these offsets are odd, camera shifts on first move, breaks rotate
+        setX(tile.getSceneX() + xOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
+        setY(tile.getSceneY() + yOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
         getTransforms().clear();
         getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
         setTranslateZ(tile.getSceneZ() - 100.0);

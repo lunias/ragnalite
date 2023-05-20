@@ -336,8 +336,5 @@ no level crafting + 1 mats == 50% + 1x
 
 DEV TODOS:
 
-Get map and camera angle correct (rotateX)
-Rotate sprite away from camera so that it is perpendicular to camera angle (-rotateX)
-Zoom camera along vector from (max camera) to sprite position (min camera)
-Rotate map underneath players
 Update sprites based on map rotate
+Make other sprites stay in place while the player moves
