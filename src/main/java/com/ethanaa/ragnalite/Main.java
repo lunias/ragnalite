@@ -128,8 +128,8 @@ public class Main extends Application implements CommandLineRunner {
         subScene.setPickOnBounds(true);
 
         worldRegion.getTransforms().add(worldRotate);
-        worldRotate.pivotXProperty().bind(player.centerXProperty().add(25.0));
-        worldRotate.pivotYProperty().bind(player.centerYProperty().add(25.0));
+        worldRotate.pivotXProperty().bind(player.centerXProperty());
+        worldRotate.pivotYProperty().bind(player.centerYProperty());
 
         camera.setFieldOfView(60);
         camera.setFarClip(10000.0);
