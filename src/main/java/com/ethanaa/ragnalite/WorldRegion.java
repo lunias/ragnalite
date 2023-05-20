@@ -37,6 +37,9 @@ public class WorldRegion extends Group {
     }
 
     public TileNode getTileNode(int x, int y) {
+        if (x > REGION_WIDTH - 1 || x < 0 || y > REGION_HEIGHT - 1 || y < 0) {
+            return null;
+        }
         return tileNodes[x][y];
     }
 

@@ -10,20 +10,18 @@ import javafx.scene.transform.Rotate;
 import java.util.Map;
 
 public class Sprite extends ImageView {
-
-    private TileNode tile;
     private Rotate cameraRotate;
 
-    private Map<Action, Map<Orientation, SpriteAnimation>> animationMap;
+    private final Map<Action, Map<Orientation, SpriteAnimation>> animationMap;
 
     private SpriteAnimation currentAnimation;
 
-    private ObjectProperty<Action> currentAction = new SimpleObjectProperty<>();
-    private ObjectProperty<Orientation> currentOrientation = new SimpleObjectProperty<>();
+    private final ObjectProperty<Action> currentAction = new SimpleObjectProperty<>();
+    private final ObjectProperty<Orientation> currentOrientation = new SimpleObjectProperty<>();
+    private final ObjectProperty<TileNode> tile;
 
     public Sprite(SpriteBuilder spriteBuilder) {
 
-        this.tile = spriteBuilder.getTile();
         this.cameraRotate = spriteBuilder.getCameraRotate();
         this.animationMap = spriteBuilder.getAnimationMap();
 
@@ -62,6 +60,12 @@ public class Sprite extends ImageView {
 
         this.currentAction.set(spriteBuilder.getAction());
         this.currentOrientation.set(spriteBuilder.getOrientation());
+        this.tile = spriteBuilder.getTile();
+
+        this.tile.addListener(((observable, oldTile, newTile) -> {
+            System.out.println("Tile was updated: " + newTile);
+            moveTo(newTile);
+        }));
 
         this.cameraRotate.angleProperty().addListener((observableValue, oldAngle, newAngle) -> {
 
@@ -106,30 +110,30 @@ public class Sprite extends ImageView {
 
     public void moveTo(TileNode tile) {
 
-        this.tile = tile;
-
-        final Rotate spriteStandRotate = new Rotate(90, tile.getSceneX(), tile.getSceneY(), 0, Rotate.X_AXIS);
-        final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), 0, Rotate.Y_AXIS);
+        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
+        final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.Y_AXIS);
 
         for (Map<Orientation, SpriteAnimation> orientationSpriteAnimationMap : animationMap.values()) {
             for (SpriteAnimation spriteAnimation : orientationSpriteAnimationMap.values()) {
 
                 ImageView imageView = spriteAnimation.getImageView();
-                imageView.setX(tile.getSceneX() - 25);
-                imageView.setY(tile.getSceneY() - 25);
+                imageView.setX(tile.getSceneX());
+                imageView.setY(tile.getSceneY() - 20.0);
                 imageView.getTransforms().clear();
                 imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
+                imageView.setTranslateZ(tile.getSceneZ() - 100.0);
             }
         }
 
-        setX(tile.getSceneX() - 25);
-        setY(tile.getSceneY() - 25);
+        setX(tile.getSceneX());
+        setY(tile.getSceneY() - 20.0);
         getTransforms().clear();
         getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
+        setTranslateZ(tile.getSceneZ() - 100.0);
     }
 
     public TileNode getTile() {
-        return tile;
+        return tile.get();
     }
 
     public Rotate getCameraRotate() {

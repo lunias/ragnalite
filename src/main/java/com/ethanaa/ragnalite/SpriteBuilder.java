@@ -1,6 +1,8 @@
 package com.ethanaa.ragnalite;
 
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public class SpriteBuilder {
 
-    private TileNode tile;
+    private ObjectProperty<TileNode> tile = new SimpleObjectProperty<>();
     private Rotate cameraRotate;
     private Orientation orientation;
     private Action action;
@@ -23,7 +25,7 @@ public class SpriteBuilder {
         return new Sprite(this);
     }
 
-    public SpriteBuilder setTile(TileNode tile) {
+    public SpriteBuilder setTile(ObjectProperty<TileNode> tile) {
         this.tile = tile;
         return this;
     }
@@ -35,8 +37,8 @@ public class SpriteBuilder {
 
     private SpriteAnimation createAnimation(Image image, int offsetX, int offsetY, int width, int height, int count, int columns, int duration, int translateZ) {
 
-        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
-        final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.Y_AXIS);
+        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.get().getSceneX(), tile.get().getSceneY(), tile.get().getSceneZ(), Rotate.X_AXIS);
+        final Rotate spriteCameraRotate = new Rotate(0, tile.get().getSceneX(), tile.get().getSceneY(), tile.get().getSceneZ(), Rotate.Y_AXIS);
 
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
 
@@ -45,10 +47,10 @@ public class SpriteBuilder {
         imageView.setSmooth(true);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(50);
-        imageView.setX(tile.getSceneX());
-        imageView.setY(tile.getSceneY() - 20.0); // TODO I think -20 is required because of how we rotate the sprite away from the camera, the sprite is floating above the ground
+        imageView.setX(tile.get().getSceneX());
+        imageView.setY(tile.get().getSceneY() - 20.0); // TODO I think -20 is required because of how we rotate the sprite away from the camera, the sprite is floating above the ground
         imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
-        imageView.setTranslateZ(tile.getSceneZ() + translateZ);
+        imageView.setTranslateZ(tile.get().getSceneZ() + translateZ);
         imageView.setPickOnBounds(false);
 
         return new SpriteAnimation(
@@ -95,7 +97,7 @@ public class SpriteBuilder {
         return this;
     }
 
-    public TileNode getTile() {
+    public ObjectProperty<TileNode> getTile() {
         return tile;
     }
 

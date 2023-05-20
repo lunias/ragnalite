@@ -51,22 +51,28 @@ public class TileNode extends StackPane {
         getChildren().add(tile);
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
     public double getSceneX() {
         return this.tile.getBoundsInParent().getCenterX();
-        //return this.tile.getTranslateX();
-        //return this.tile.localToScene(this.tile.getBoundsInParent()).getCenterX();
     }
 
     public double getSceneY() {
         return this.tile.getBoundsInParent().getCenterY();
-        //return this.tile.getTranslateY();
-        //return this.tile.localToScene(this.tile.getBoundsInParent()).getCenterY();
     }
 
     public double getSceneZ() {
         return this.tile.getBoundsInParent().getCenterZ();
-        //return this.tile.getTranslateZ();
-        //return this.tile.localToScene(this.tile.getBoundsInParent()).getCenterZ();
     }
 
     @Override

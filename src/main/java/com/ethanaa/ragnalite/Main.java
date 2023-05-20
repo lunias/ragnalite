@@ -64,7 +64,9 @@ public class Main extends Application implements CommandLineRunner {
         BorderPane main = new BorderPane();
         StackPane stackPane = new StackPane();
 
-        SubScene subScene = setupSubScene(main);
+        Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD, new Rotate());
+
+        SubScene subScene = setupSubScene(main, player);
         subScene.heightProperty().bind(stackPane.heightProperty());
         subScene.widthProperty().bind(stackPane.widthProperty());
         stackPane.getChildren().addAll(subScene);
@@ -72,6 +74,31 @@ public class Main extends Application implements CommandLineRunner {
         main.setCenter(stackPane);
 
         Scene scene = new Scene(main);
+
+        scene.setOnKeyPressed(ke -> {
+            switch (ke.getCode()) {
+                case W:
+                    // move north
+                    System.out.println("Moving North");
+                    player.moveNorth(worldRegion);
+                    break;
+                case A:
+                    // move west
+                    System.out.println("Moving West");
+                    player.moveWest(worldRegion);
+                    break;
+                case S:
+                    // move south
+                    System.out.println("Moving South");
+                    player.moveSouth(worldRegion);
+                    break;
+                case D:
+                    // move east
+                    System.out.println("Moving East");
+                    player.moveEast(worldRegion);
+                    break;
+            }
+        });
 
         stage.setTitle("Ragnalite (alpha)");
         stage.setScene(scene);
@@ -88,12 +115,11 @@ public class Main extends Application implements CommandLineRunner {
         stage.setHeight(windowHeight);
         stage.setX((screenWidth - windowWidth) / 2.0);
         stage.setY((screenHeight - windowHeight) / 2.0);
+
         stage.show();
     }
 
-    private SubScene setupSubScene(Pane parent) {
-
-        Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD, new Rotate());
+    private SubScene setupSubScene(Pane parent, Player player) {
 
         Group worldGroup = new Group(worldRegion, player.getSprite());
 
@@ -115,11 +141,13 @@ public class Main extends Application implements CommandLineRunner {
 
         camera.getTransforms().addAll(cameraRx);
 
+        // save mouse press location for drag
         subScene.setOnMousePressed(me -> {
             mousePosX = me.getX();
             mousePosY = me.getY();
         });
 
+        // rotate the world around the player
         subScene.setOnMouseDragged(me -> {
             if (me.isSecondaryButtonDown()) {
                 mouseOldY = mousePosY;
@@ -129,12 +157,7 @@ public class Main extends Application implements CommandLineRunner {
             }
         });
 
-        subScene.setOnMouseClicked(me -> {
-            if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-                System.out.println("Right clicked: " + me.getX() + ", " + me.getY());
-            }
-        });
-
+        // zoom in and out on player
         subScene.setOnScroll(me -> {
             double scrollAmount = me.getDeltaY();
             double newTz = cameraTz.get() + scrollAmount;
