@@ -113,20 +113,22 @@ public class Sprite extends ImageView {
         final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
         final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.Y_AXIS);
 
+        spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
+
         for (Map<Orientation, SpriteAnimation> orientationSpriteAnimationMap : animationMap.values()) {
             for (SpriteAnimation spriteAnimation : orientationSpriteAnimationMap.values()) {
 
                 ImageView imageView = spriteAnimation.getImageView();
-                imageView.setX(tile.getSceneX());
-                imageView.setY(tile.getSceneY() - 20.0);
+                imageView.setX(tile.getSceneX() - 20.0); // TODO these offsets are odd, camera shifts on first move, breaks rotate
+                imageView.setY(tile.getSceneY() - 37.5); // TODO these offsets are odd, camera shifts on first move, breaks rotate
                 imageView.getTransforms().clear();
                 imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
                 imageView.setTranslateZ(tile.getSceneZ() - 100.0);
             }
         }
 
-        setX(tile.getSceneX());
-        setY(tile.getSceneY() - 20.0);
+        setX(tile.getSceneX() - 20.0); // TODO these offsets are odd, camera shifts on first move, breaks rotate
+        setY(tile.getSceneY() - 37.5); // TODO these offsets are odd, camera shifts on first move, breaks rotate
         getTransforms().clear();
         getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
         setTranslateZ(tile.getSceneZ() - 100.0);

@@ -12,7 +12,7 @@ public class Player {
     private static final Image IMAGE = new Image("sprites2.png");
     private static final Image IMAGE_BACK = new Image("sprites2_back.png");
 
-    private ObjectProperty<TileNode> tile = new SimpleObjectProperty<>();
+    private final ObjectProperty<TileNode> tile = new SimpleObjectProperty<>();
     private Sprite sprite;
     private Orientation orientation;
     private Action action = Action.IDLE;

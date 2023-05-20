@@ -49,6 +49,7 @@ public class SpriteBuilder {
         imageView.setFitWidth(50);
         imageView.setX(tile.get().getSceneX());
         imageView.setY(tile.get().getSceneY() - 20.0); // TODO I think -20 is required because of how we rotate the sprite away from the camera, the sprite is floating above the ground
+        System.out.println("Sprite Builder: putting player @ " + tile.get().getSceneX() + ", " + tile.get().getSceneY());
         imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
         imageView.setTranslateZ(tile.get().getSceneZ() + translateZ);
         imageView.setPickOnBounds(false);
