@@ -29,10 +29,10 @@ public class Player {
                 .setCameraRotate(cameraRz)
                 .setIdleAnimation(IMAGE, 0, 0,
                         1600 / 10, 1097 / 4, 39,
-                        10, 2_000, -100)
+                        10, 2_000, -25 - 100)
                 .setIdleAnimationBehind(IMAGE_BACK, 0, 0,
                         1600 / 10, 1102 / 4, 40,
-                        10, 2_000, -100)
+                        10, 2_000, -25 - 100)
                 .setOrientation(this.orientation)
                 .setAction(this.action)
                 .build();
@@ -42,9 +42,9 @@ public class Player {
     }
 
     public void setTile(TileNode tile) {
-        this.tile.set(tile);
         this.centerX.set(tile.getSceneX());
         this.centerY.set(tile.getSceneY());
+        this.tile.set(tile);
     }
 
     public Sprite getSprite() {

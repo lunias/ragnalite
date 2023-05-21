@@ -336,5 +336,17 @@ no level crafting + 1 mats == 50% + 1x
 
 DEV TODOS:
 
-Update sprites based on map rotate
-Make other sprites stay in place while the player moves
+Zoom is going to the tile, needs to go to the center of the player
+Add other sprites to the map
+Make all sprites face the camera, but respect their orientation
+Refactor for artemis
+Get rid of all hardcoded values
+Add walking animation
+Implement click to move w/ A*
+Network for n players
+Create base UI
+       health bar
+       mana bar
+       skill hotkeys
+       minimap
+       chat

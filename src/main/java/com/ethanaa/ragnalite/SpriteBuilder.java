@@ -19,6 +19,8 @@ public class SpriteBuilder {
     private Orientation orientation;
     private Action action;
 
+    private boolean isPlayer = true;
+
     final private Map<Action, Map<Orientation, SpriteAnimation>> animationMap = new HashMap<>();
 
     public Sprite build() {
@@ -37,22 +39,44 @@ public class SpriteBuilder {
 
     private SpriteAnimation createAnimation(Image image, int offsetX, int offsetY, int width, int height, int count, int columns, int duration, int translateZ) {
 
-        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.get().getSceneX(), tile.get().getSceneY(), tile.get().getSceneZ(), Rotate.X_AXIS);
-        final Rotate spriteCameraRotate = new Rotate(0, tile.get().getSceneX(), tile.get().getSceneY(), tile.get().getSceneZ(), Rotate.Y_AXIS);
-
-        spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
-
         final ImageView imageView = new ImageView(image);
         imageView.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
         imageView.setSmooth(true);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(50);
+
+        double realWidth = imageView.getBoundsInParent().getWidth();
+        double realHeight = imageView.getBoundsInParent().getHeight();
+
+        System.out.println("Real height: " + realHeight);
+        System.out.println("Real width: " + realWidth);
+
         imageView.setX(tile.get().getSceneX());
-        imageView.setY(tile.get().getSceneY() - 20.0); // TODO I think -20 is required because of how we rotate the sprite away from the camera, the sprite is floating above the ground
-        System.out.println("Sprite Builder: putting player @ " + tile.get().getSceneX() + ", " + tile.get().getSceneY());
-        imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
-        imageView.setTranslateZ(tile.get().getSceneZ() + translateZ);
+        imageView.setY(tile.get().getSceneY() - (realHeight - 50.0));
+        System.out.println("Sprite Builder: putting sprite @ " + tile.get().getSceneX() + ", " + tile.get().getSceneY());
+
         imageView.setPickOnBounds(false);
+
+        final Rotate spriteCameraRotate = new Rotate(
+                0,
+                imageView.getX() + realWidth / 2.0,
+                imageView.getY() + realHeight / 2.0,
+                0,
+                Rotate.Z_AXIS);
+        spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
+
+        final Rotate spriteStandRotate = new Rotate(
+                Main.CAMERA_ANGLE,
+                imageView.getX() + realWidth / 2.0,
+                imageView.getY() + realHeight / 2.0,
+                0,
+                Rotate.X_AXIS);
+
+        System.out.println("Tile Z: " + tile.get().getSceneZ());
+
+        imageView.getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
+
+        imageView.setTranslateZ(tile.get().getSceneZ() * -2 - (realHeight - 50.0));
 
         return new SpriteAnimation(
                 imageView,
@@ -98,6 +122,12 @@ public class SpriteBuilder {
         return this;
     }
 
+    public SpriteBuilder isPlayer(boolean isPlayer) {
+
+        this.isPlayer = isPlayer;
+        return this;
+    }
+
     public ObjectProperty<TileNode> getTile() {
         return tile;
     }
@@ -116,5 +146,9 @@ public class SpriteBuilder {
 
     public Map<Action, Map<Orientation, SpriteAnimation>> getAnimationMap() {
         return animationMap;
+    }
+
+    public boolean isPlayer() {
+        return isPlayer;
     }
 }

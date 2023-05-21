@@ -32,7 +32,7 @@ public class Main extends Application implements CommandLineRunner {
     private static final double DEFAULT_ZOOM_DISTANCE = 300.0;
     private static final double MIN_ZOOM_DISTANCE = 220.0;
     private static final double MAX_ZOOM_DISTANCE = 580.0;
-    private static final double CAMERA_ANGLE = 26.565;
+    public static final double CAMERA_ANGLE = 26.565;
 
     private final PerspectiveCamera camera = new PerspectiveCamera(true);
     private final DoubleProperty cameraTx = camera.translateXProperty();
@@ -65,6 +65,9 @@ public class Main extends Application implements CommandLineRunner {
         StackPane stackPane = new StackPane();
 
         Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD, new Rotate());
+        AngryPenguin angryPenguin = new AngryPenguin(worldRegion.getTileNode(49, 49), Orientation.FORWARD, worldRotate);
+
+        worldRegion.getChildren().add(angryPenguin.getSprite());
 
         SubScene subScene = setupSubScene(main, player);
         subScene.heightProperty().bind(stackPane.heightProperty());
@@ -128,8 +131,8 @@ public class Main extends Application implements CommandLineRunner {
         subScene.setPickOnBounds(true);
 
         worldRegion.getTransforms().add(worldRotate);
-        worldRotate.pivotXProperty().bind(player.centerXProperty());
-        worldRotate.pivotYProperty().bind(player.centerYProperty());
+        worldRotate.pivotXProperty().bind(player.centerXProperty().add(25.0)); // TODO 25 fixes initial pivot (tile locations off before load?)
+        worldRotate.pivotYProperty().bind(player.centerYProperty().add(25.0));
 
         camera.setFieldOfView(60);
         camera.setFarClip(10000.0);

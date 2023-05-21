@@ -44,7 +44,7 @@ public class TileNode extends StackPane {
 
         this.tile.setOnMouseClicked(me -> {
             if (me.getButton() == MouseButton.PRIMARY) {
-                System.out.println("Clicked tile (" + x + ", " + y + ", " + z +" ) @ Scene (" + this.getSceneX() + ", " + this.getSceneY() + ")");
+                System.out.println("Clicked tile (" + x + ", " + y + ", " + z +" ) @ Scene (" + this.getSceneX() + ", " + this.getSceneY() + ", " + this.getSceneZ() + ")");
             }
         });
 
@@ -72,7 +72,7 @@ public class TileNode extends StackPane {
     }
 
     public double getSceneZ() {
-        return this.tile.getBoundsInParent().getCenterZ();
+        return this.tile.getBoundsInParent().getMaxZ();
     }
 
     @Override

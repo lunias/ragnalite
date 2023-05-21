@@ -75,10 +75,12 @@ public class Sprite extends ImageView {
 
             double absoluteAngle = Math.abs(newAngle.doubleValue());
 
+            /*
             if (absoluteAngle == 90 || absoluteAngle == 270) {
                 this.currentOrientation.set(this.currentOrientation.get() == Orientation.FORWARD
                         ? Orientation.BACKWARD : Orientation.FORWARD);
             }
+             */
 
         });
     }
@@ -114,10 +116,23 @@ public class Sprite extends ImageView {
 
     public void moveTo(TileNode tile) {
 
-        final Rotate spriteStandRotate = new Rotate(90 - 63.44, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.X_AXIS);
-        final Rotate spriteCameraRotate = new Rotate(0, tile.getSceneX(), tile.getSceneY(), tile.getSceneZ(), Rotate.Y_AXIS);
+        double realWidth = this.getBoundsInParent().getWidth();
+        double realHeight = this.getBoundsInParent().getHeight();
 
+        final Rotate spriteCameraRotate = new Rotate(
+                0,
+                this.getX() + realWidth / 2.0,
+                this.getY() + realHeight / 2.0,
+                0,
+                Rotate.Z_AXIS);
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
+
+        final Rotate spriteStandRotate = new Rotate(
+                Main.CAMERA_ANGLE,
+                this.getX() + realWidth / 2.0,
+                this.getY() + realHeight / 2.0,
+                0,
+                Rotate.X_AXIS);
 
         double xOffsetForward = -20.0;
         double yOffsetForward = -37.5;
@@ -127,23 +142,25 @@ public class Sprite extends ImageView {
         double xOffset = getCurrentOrientation() == Orientation.FORWARD ? xOffsetForward : xOffsetBackward;
         double yOffset = getCurrentOrientation() == Orientation.FORWARD ? yOffsetForward : yOffsetBackward;
 
+        double bugCorrection = -25.0;
+
         for (Map<Orientation, SpriteAnimation> orientationSpriteAnimationMap : animationMap.values()) {
             for (SpriteAnimation spriteAnimation : orientationSpriteAnimationMap.values()) {
 
                 ImageView imageView = spriteAnimation.getImageView();
-                imageView.setX(tile.getSceneX() + xOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
-                imageView.setY(tile.getSceneY() + yOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
+                imageView.setX(tile.getSceneX() + bugCorrection);
+                imageView.setY(tile.getSceneY() - (realHeight - 50.0) + bugCorrection);
                 imageView.getTransforms().clear();
                 imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
-                imageView.setTranslateZ(tile.getSceneZ() - 100.0);
+                imageView.setTranslateZ(tile.getSceneZ() * -2 - (realHeight - 50.0));
             }
         }
 
-        setX(tile.getSceneX() + xOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
-        setY(tile.getSceneY() + yOffset); // TODO these offsets are odd, camera shifts on first move, breaks rotate before move
+        setX(tile.getSceneX() + bugCorrection);
+        setY(tile.getSceneY() - (realHeight - 50.0) + bugCorrection);
         getTransforms().clear();
-        getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
-        setTranslateZ(tile.getSceneZ() - 100.0);
+        getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
+        setTranslateZ(tile.getSceneZ() * -2 - (realHeight - 50.0));
     }
 
     public TileNode getTile() {
