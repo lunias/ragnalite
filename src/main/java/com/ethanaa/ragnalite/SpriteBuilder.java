@@ -51,32 +51,35 @@ public class SpriteBuilder {
         System.out.println("Real height: " + realHeight);
         System.out.println("Real width: " + realWidth);
 
-        imageView.setX(tile.get().getSceneX());
-        imageView.setY(tile.get().getSceneY() - (realHeight - 50.0));
+        double xOffset = -(realWidth / 2.0);
+        double yOffset = -(realHeight / 2.0 + (realHeight - 50.0));
+
+        imageView.setX(tile.get().getSceneX() + xOffset);
+        imageView.setY(tile.get().getSceneY() + yOffset);
         System.out.println("Sprite Builder: putting sprite @ " + tile.get().getSceneX() + ", " + tile.get().getSceneY());
 
         imageView.setPickOnBounds(false);
 
         final Rotate spriteCameraRotate = new Rotate(
                 0,
-                imageView.getX() + realWidth / 2.0,
-                imageView.getY() + realHeight / 2.0,
+                tile.get().getSceneX(),
+                tile.get().getSceneY(),
                 0,
                 Rotate.Z_AXIS);
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
 
         final Rotate spriteStandRotate = new Rotate(
                 Main.CAMERA_ANGLE,
-                imageView.getX() + realWidth / 2.0,
-                imageView.getY() + realHeight / 2.0,
-                0,
+                tile.get().getSceneX(),
+                tile.get().getSceneY(),
+                tile.get().getSceneZ(),
                 Rotate.X_AXIS);
 
         System.out.println("Tile Z: " + tile.get().getSceneZ());
 
-        imageView.getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
+        imageView.setTranslateZ(tile.get().getSceneZ() * -2);
 
-        imageView.setTranslateZ(tile.get().getSceneZ() * -2 - (realHeight - 50.0));
+        imageView.getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
 
         return new SpriteAnimation(
                 imageView,

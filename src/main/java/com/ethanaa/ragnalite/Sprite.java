@@ -121,46 +121,39 @@ public class Sprite extends ImageView {
 
         final Rotate spriteCameraRotate = new Rotate(
                 0,
-                this.getX() + realWidth / 2.0,
-                this.getY() + realHeight / 2.0,
+                tile.getSceneX(),
+                tile.getSceneY(),
                 0,
                 Rotate.Z_AXIS);
         spriteCameraRotate.angleProperty().bind(cameraRotate.angleProperty().multiply(-1.0));
 
         final Rotate spriteStandRotate = new Rotate(
                 Main.CAMERA_ANGLE,
-                this.getX() + realWidth / 2.0,
-                this.getY() + realHeight / 2.0,
-                0,
+                tile.getSceneX(),
+                tile.getSceneY(),
+                tile.getSceneZ(),
                 Rotate.X_AXIS);
 
-        double xOffsetForward = -20.0;
-        double yOffsetForward = -37.5;
-        double xOffsetBackward = -30.0;
-        double yOffsetBackward = -37.5;
-
-        double xOffset = getCurrentOrientation() == Orientation.FORWARD ? xOffsetForward : xOffsetBackward;
-        double yOffset = getCurrentOrientation() == Orientation.FORWARD ? yOffsetForward : yOffsetBackward;
-
-        double bugCorrection = -25.0;
+        double xOffset = -(realWidth / 2.0);
+        double yOffset = -(realHeight / 2.0 + (realHeight - 50.0));
 
         for (Map<Orientation, SpriteAnimation> orientationSpriteAnimationMap : animationMap.values()) {
             for (SpriteAnimation spriteAnimation : orientationSpriteAnimationMap.values()) {
 
                 ImageView imageView = spriteAnimation.getImageView();
-                imageView.setX(tile.getSceneX() + bugCorrection);
-                imageView.setY(tile.getSceneY() - (realHeight - 50.0) + bugCorrection);
+                imageView.setX(tile.getSceneX() + xOffset);
+                imageView.setY(tile.getSceneY() + yOffset);
                 imageView.getTransforms().clear();
-                imageView.getTransforms().addAll(spriteStandRotate, spriteCameraRotate);
-                imageView.setTranslateZ(tile.getSceneZ() * -2 - (realHeight - 50.0));
+                imageView.setTranslateZ(tile.getSceneZ() * -2);
+                imageView.getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
             }
         }
 
-        setX(tile.getSceneX() + bugCorrection);
-        setY(tile.getSceneY() - (realHeight - 50.0) + bugCorrection);
+        setX(tile.getSceneX() + xOffset);
+        setY(tile.getSceneY() + yOffset);
         getTransforms().clear();
+        setTranslateZ(tile.getSceneZ() * -2);
         getTransforms().addAll(spriteCameraRotate, spriteStandRotate);
-        setTranslateZ(tile.getSceneZ() * -2 - (realHeight - 50.0));
     }
 
     public TileNode getTile() {

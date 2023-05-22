@@ -64,12 +64,12 @@ public class Main extends Application implements CommandLineRunner {
         BorderPane main = new BorderPane();
         StackPane stackPane = new StackPane();
 
-        Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD, new Rotate());
+        Player player = new Player(worldRegion.getTileNode(50, 50), Orientation.FORWARD);
         AngryPenguin angryPenguin = new AngryPenguin(worldRegion.getTileNode(49, 49), Orientation.FORWARD, worldRotate);
 
-        worldRegion.getChildren().add(angryPenguin.getSprite());
+        Group worldGroup = new Group(worldRegion);
 
-        SubScene subScene = setupSubScene(main, player);
+        SubScene subScene = setupSubScene(main, worldGroup, player);
         subScene.heightProperty().bind(stackPane.heightProperty());
         subScene.widthProperty().bind(stackPane.widthProperty());
         stackPane.getChildren().addAll(subScene);
@@ -80,25 +80,53 @@ public class Main extends Application implements CommandLineRunner {
 
         scene.setOnKeyPressed(ke -> {
             switch (ke.getCode()) {
+                case O:
+                    player.init(new Rotate());
+                    worldGroup.getChildren().add(player.getSprite());
+                    break;
+                case P:
+                    angryPenguin.init(worldRotate);
+                    worldRegion.getChildren().add(angryPenguin.getSprite());
+                    break;
                 case W:
                     // move north
-                    System.out.println("Moving North");
+                    System.out.println("Moving Player North");
                     player.moveNorth(worldRegion);
                     break;
                 case A:
                     // move west
-                    System.out.println("Moving West");
+                    System.out.println("Moving Player West");
                     player.moveWest(worldRegion);
                     break;
                 case S:
                     // move south
-                    System.out.println("Moving South");
+                    System.out.println("Moving Player South");
                     player.moveSouth(worldRegion);
                     break;
                 case D:
                     // move east
-                    System.out.println("Moving East");
+                    System.out.println("Moving Player East");
                     player.moveEast(worldRegion);
+                    break;
+                case UP:
+                    // move north
+                    System.out.println("Moving Penguin North");
+                    angryPenguin.moveNorth(worldRegion);
+                    break;
+                case LEFT:
+                    // move west
+                    System.out.println("Moving Penguin West");
+                    angryPenguin.moveWest(worldRegion);
+                    break;
+                case DOWN:
+                    // move south
+                    System.out.println("Moving Penguin South");
+                    angryPenguin.moveSouth(worldRegion);
+                    break;
+                case RIGHT:
+                    // move east
+                    System.out.println("Moving Penguin East");
+                    angryPenguin.moveEast(worldRegion);
                     break;
             }
         });
@@ -122,17 +150,15 @@ public class Main extends Application implements CommandLineRunner {
         stage.show();
     }
 
-    private SubScene setupSubScene(Pane parent, Player player) {
-
-        Group worldGroup = new Group(worldRegion, player.getSprite());
+    private SubScene setupSubScene(Pane parent, Group worldGroup, Player player) {
 
         SubScene subScene = new SubScene(worldGroup, -1, -1, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
         subScene.setPickOnBounds(true);
 
         worldRegion.getTransforms().add(worldRotate);
-        worldRotate.pivotXProperty().bind(player.centerXProperty().add(25.0)); // TODO 25 fixes initial pivot (tile locations off before load?)
-        worldRotate.pivotYProperty().bind(player.centerYProperty().add(25.0));
+        worldRotate.pivotXProperty().bind(player.centerXProperty());
+        worldRotate.pivotYProperty().bind(player.centerYProperty());
 
         camera.setFieldOfView(60);
         camera.setFarClip(10000.0);

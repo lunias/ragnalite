@@ -20,31 +20,38 @@ public class Player {
     private final DoubleProperty centerX = new SimpleDoubleProperty();
     private final DoubleProperty centerY = new SimpleDoubleProperty();
 
-    public Player(TileNode tile, Orientation orientation, Rotate cameraRz) {
+    public Player(TileNode tile, Orientation orientation) {
         this.tile.set(tile);
         this.orientation = orientation;
+    }
+
+    public void init(Rotate cameraRz) {
 
         this.sprite = new SpriteBuilder()
-                .setTile(this.tile)
+                .setTile(getTileProperty())
                 .setCameraRotate(cameraRz)
                 .setIdleAnimation(IMAGE, 0, 0,
                         1600 / 10, 1097 / 4, 39,
-                        10, 2_000, -25 - 100)
+                        10, 2_000, 0)
                 .setIdleAnimationBehind(IMAGE_BACK, 0, 0,
                         1600 / 10, 1102 / 4, 40,
-                        10, 2_000, -25 - 100)
+                        10, 2_000, 0)
                 .setOrientation(this.orientation)
                 .setAction(this.action)
                 .build();
 
+        this.centerX.set(getTileProperty().get().getSceneX());
+        this.centerY.set(getTileProperty().get().getSceneY());
+    }
+
+    public void setTile(TileNode tile) {
+        this.tile.set(tile);
         this.centerX.set(tile.getSceneX());
         this.centerY.set(tile.getSceneY());
     }
 
-    public void setTile(TileNode tile) {
-        this.centerX.set(tile.getSceneX());
-        this.centerY.set(tile.getSceneY());
-        this.tile.set(tile);
+    public ObjectProperty<TileNode> getTileProperty() {
+        return tile;
     }
 
     public Sprite getSprite() {

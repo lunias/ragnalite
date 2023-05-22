@@ -19,29 +19,35 @@ public class AngryPenguin {
     public AngryPenguin(TileNode tile, Orientation orientation, Rotate cameraRz) {
         this.setTile(tile);
         this.orientation = orientation;
+    }
 
+    public void init(Rotate cameraRz) {
         this.sprite = new SpriteBuilder()
-                .setTile(this.tile)
+                .setTile(getTileProperty())
                 .setCameraRotate(cameraRz)
                 .setIdleAnimation(IMAGE, 0, 0,
                         480 / 4, 124, 4,
-                        4, 1_000, -25)
+                        4, 1_000, 0)
                 .setIdleAnimationBehind(IMAGE, 0, 0,
-                        1247 / 11, 866 / 7, 4,
-                        12, 2_000, -100)
+                        480 / 4, 124, 4,
+                        4, 1_000, 0)
                 .setOrientation(this.orientation)
                 .setAction(this.action)
                 .isPlayer(false)
                 .build();
 
-        this.centerX.set(tile.getSceneX());
-        this.centerY.set(tile.getSceneY());
+        this.centerX.set(getTileProperty().get().getSceneX());
+        this.centerY.set(getTileProperty().get().getSceneY());
     }
 
     public void setTile(TileNode tile) {
         this.tile.set(tile);
         this.centerX.set(tile.getSceneX());
         this.centerY.set(tile.getSceneY());
+    }
+
+    public ObjectProperty<TileNode> getTileProperty() {
+        return tile;
     }
 
     public Sprite getSprite() {
@@ -64,4 +70,39 @@ public class AngryPenguin {
         return centerY;
     }
 
+    public void moveNorth(WorldRegion worldRegion) {
+        TileNode target = worldRegion.getTileNode(this.tile.get().getX(), this.tile.get().getY() - 1);
+        System.out.println("Target tile: " + target);
+        if (target == null) {
+            return;
+        }
+        setTile(target);
+    }
+
+    public void moveWest(WorldRegion worldRegion) {
+        TileNode target = worldRegion.getTileNode(this.tile.get().getX() - 1, this.tile.get().getY());
+        System.out.println("Target tile: " + target);
+        if (target == null) {
+            return;
+        }
+        setTile(target);
+    }
+
+    public void moveSouth(WorldRegion worldRegion) {
+        TileNode target = worldRegion.getTileNode(this.tile.get().getX(), this.tile.get().getY() + 1);
+        System.out.println("Target tile: " + target);
+        if (target == null) {
+            return;
+        }
+        setTile(target);
+    }
+
+    public void moveEast(WorldRegion worldRegion) {
+        TileNode target = worldRegion.getTileNode(this.tile.get().getX() + 1, this.tile.get().getY());
+        System.out.println("Target tile: " + target);
+        if (target == null) {
+            return;
+        }
+        setTile(target);
+    }
 }
