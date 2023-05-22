@@ -81,10 +81,16 @@ public class Main extends Application implements CommandLineRunner {
         scene.setOnKeyPressed(ke -> {
             switch (ke.getCode()) {
                 case O:
+                    if (player.getSprite() != null) {
+                        break;
+                    }
                     player.init(new Rotate());
                     worldGroup.getChildren().add(player.getSprite());
                     break;
                 case P:
+                    if (angryPenguin.getSprite() != null) {
+                        break;
+                    }
                     angryPenguin.init(worldRotate);
                     worldRegion.getChildren().add(angryPenguin.getSprite());
                     break;

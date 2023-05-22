@@ -9,6 +9,7 @@ import javafx.scene.transform.Rotate;
 
 public class AngryPenguin {
     private static final Image IMAGE = new Image("angry_penguin_idle_front.png");
+    private static final Image IMAGE_BACK = new Image("angry_penguin_idle_back.png");
     private final ObjectProperty<TileNode> tile = new SimpleObjectProperty<>();
     private Sprite sprite;
     private Orientation orientation;
@@ -28,7 +29,7 @@ public class AngryPenguin {
                 .setIdleAnimation(IMAGE, 0, 0,
                         480 / 4, 124, 4,
                         4, 1_000, 0)
-                .setIdleAnimationBehind(IMAGE, 0, 0,
+                .setIdleAnimationBehind(IMAGE_BACK, 0, 0,
                         480 / 4, 124, 4,
                         4, 1_000, 0)
                 .setOrientation(this.orientation)
